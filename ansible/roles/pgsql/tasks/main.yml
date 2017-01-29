@@ -34,7 +34,7 @@
   become: yes
   become_user: postgres
   shell: psql {{ pgsql.database }} < /vagrant/{{ pgsql.dump }}
-  when: pgsql.dump
+  when: pgsql.dump is defined
 
 - name: Create users
   become: yes

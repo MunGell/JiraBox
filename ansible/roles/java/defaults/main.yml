@@ -4,5 +4,6 @@ java:
     subversion: 121
     install_dir: /usr/local/java
     set_javahome: true
-    jdk_dir: jdk1.{{java.version}}.0_{{java.subversion}}
-    tarball_file: server-jre-{{java.version}}u{{java.subversion}}-linux-x64.tar.gz
+
+jdk_dir: 'jdk1.{{java.version}}.0_{{java.subversion}}'
+jre_tarball_file: 'server-jre-{{java.version}}u{{java.subversion}}-linux-x64.tar.gz'

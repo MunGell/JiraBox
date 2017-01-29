@@ -34,11 +34,7 @@
   tags: jira
 
 - name: download package
-  get_url:
-    url: "{{ jira_url }}"
-    dest: "/tmp/{{ jira_archive }}"
-    checksum: "{{ jira_checksum }}"
-    validate_certs: false
+  shell: "wget -O /tmp/{{ jira_archive }} {{ jira_url }}"
   tags: jira
 
 - name: unarchive package

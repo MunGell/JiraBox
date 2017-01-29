@@ -1,5 +1,6 @@
 .vagrant
 
+*.retry
 ansible/files
 !ansible/files/.gitkeep
 

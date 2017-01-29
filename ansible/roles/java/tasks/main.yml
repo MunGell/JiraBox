@@ -1,8 +1,8 @@
 ---
 - name: copy tarball from local
   copy:
-    src: "{{ playbook_dir }}/files/{{ java.tarball_file }}"
-    dest: "/tmp/{{ java.tarball_file }}"
+    src: "{{ playbook_dir }}/files/{{ jre_tarball_file }}"
+    dest: "/tmp/{{ jre_tarball_file }}"
 
 - name: create directory for java
   file:
@@ -14,7 +14,7 @@
 
 - name: install JRE via tarball file
   unarchive:
-    src: "/tmp/{{ java.tarball_file }}"
+    src: "/tmp/{{ jre_tarball_file }}"
     dest: "{{ java.install_dir }}"
     owner: root
     group: root
