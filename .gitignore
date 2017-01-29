@@ -1,0 +1,6 @@
+.vagrant
+
+ansible/files
+!ansible/files/.gitkeep
+
+ansible/vars/all.yml

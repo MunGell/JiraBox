@@ -1,0 +1,6 @@
+---
+pgsql:
+    database: db
+    user: admin
+    password: admin
+    dump: ~

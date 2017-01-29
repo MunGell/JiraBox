@@ -1,0 +1,72 @@
+---
+# tasks file for jira
+
+- name: create group
+  group:
+    name: "{{ jira.user }}"
+    gid: "{{ jira.gid | default(None) or omit }}"
+  when: jira.pass is string and jira.hash_salt is string
+  notify: restart jira
+  tags: jira
+
+- name: create user
+  user:
+    name: "{{ jira.user }}"
+    password: "{{ jira.pass | password_hash('sha512', jira.hash_salt) }}"
+    home: "{{ jira_home }}"
+    group: "{{ jira.user }}"
+    uid: "{{ jira.uid | default(None) or omit }}"
+    shell: "/bin/bash"
+  when: jira.pass is string and jira.hash_salt is string
+  notify: restart jira
+  tags: jira
+
+- name: prepare files
+  file:
+    dest: "{{ item.dest }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "{{ item.mode }}"
+    state: "{{ item.state }}"
+  with_items:
+    - { dest: "{{ jira_catalina }}", owner: "{{ jira.user }}", group: "{{ jira.user }}", mode: "0755", state: "directory" }
+  notify: restart jira
+  tags: jira
+
+- name: download package
+  get_url:
+    url: "{{ jira_url }}"
+    dest: "/tmp/{{ jira_archive }}"
+    checksum: "{{ jira_checksum }}"
+    validate_certs: false
+  tags: jira
+
+- name: unarchive package
+  shell: |
+    tar zxvf /tmp/{{ jira_archive }} -C {{ jira_catalina }} --strip-components=1
+    chown -Rf {{ jira.user }}:{{ jira.user }} {{ jira_catalina }}
+  args:
+    creates: "{{ jira_catalina }}/bin/start-jira.sh"
+  notify: restart jira
+  tags: jira
+
+- name: copy templates
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "{{ item.mode }}"
+  with_items:
+    - { src: "etc/init.d/jira.j2", dest: "/etc/init.d/jira", owner: "root", group: "root", mode: "0755" }
+    - { src: "usr/share/jira/bin/setenv.sh.j2", dest: "{{ jira_catalina }}/bin/setenv.sh", owner: "{{ jira.user }}", group: "{{ jira.user }}", mode: "0644" }
+    - { src: "usr/share/jira/conf/server.xml.j2", dest: "{{ jira_catalina }}/conf/server.xml", owner: "{{ jira.user }}", group: "{{ jira.user }}", mode: "0644" }
+  notify: restart jira
+  tags: jira
+
+- name: enable service
+  service:
+    name: "jira"
+    enabled: "yes"
+  notify: restart jira
+  tags: jira

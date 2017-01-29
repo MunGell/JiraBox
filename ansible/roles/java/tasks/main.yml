@@ -1,0 +1,35 @@
+---
+- name: copy tarball from local
+  copy:
+    src: "{{ playbook_dir }}/files/{{ java.tarball_file }}"
+    dest: "/tmp/{{ java.tarball_file }}"
+
+- name: create directory for java
+  file:
+    path: "{{ java.install_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "u=rwx,go=rx"
+
+- name: install JRE via tarball file
+  unarchive:
+    src: "/tmp/{{ java.tarball_file }}"
+    dest: "{{ java.install_dir }}"
+    owner: root
+    group: root
+    mode: "go-w"
+    copy: no
+
+- block:
+
+    - name: make sure /etc/profile.d exists
+      file: path=/etc/profile.d  state=directory
+
+    - name: export JAVA_HOME and JRE_HOME
+      template:
+        src:  ../templates/java_home.sh.j2
+        dest: /etc/profile.d/java_home.sh
+        mode: "a+x"
+
+  when: java.set_javahome
