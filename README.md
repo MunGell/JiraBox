@@ -4,7 +4,7 @@ Vagrant box for setting up local Jira server.
 
 Steps:
 
-## Create an `ansible/vars/all.yml` file and configure your setup there.
+- Create an `ansible/vars/all.yml` file and configure your setup there.
 
 For example, this is how it might look like:
 
@@ -29,6 +29,6 @@ jira:
     user: jira
 ```
 
-## Download JRE from Oracle website to `ansible/files` directory e.g. `server-jre-8u121-linux-x64.tar.gz`. Update your variable with the version of Java you downloaded.
+- Download JRE from Oracle website to `ansible/files` directory e.g. `server-jre-8u121-linux-x64.tar.gz`. Update your variable with the version of Java you downloaded.
 
-## Run `vagrant up`
+- Run `vagrant up`
